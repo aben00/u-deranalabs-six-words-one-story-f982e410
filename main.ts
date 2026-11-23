@@ -9,7 +9,7 @@
 // out. What he did, and why she forgave him anyway, is left for
 // the reader to fill in. Every word earns its place.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 const STORY: string = "She forgave him. He never knew.";
@@ -37,6 +37,15 @@ function main(): void {
   const outPath: string = "/output/entry.txt";
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, STORY, "utf8");
+
+  // Verify what was actually written: read it back and confirm it is
+  // byte-for-byte the story the gate just approved, with no trailing
+  // newline or extra whitespace added by the write.
+  const written: string = readFileSync(outPath, "utf8");
+  if (written !== STORY) {
+    fail(`wrote ${JSON.stringify(written)}, expected ${JSON.stringify(STORY)}`);
+  }
+
   console.log(`wrote ${words.length} words (${STORY.length} chars) to ${outPath}`);
 }
 
